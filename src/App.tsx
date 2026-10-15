@@ -334,7 +334,7 @@ function App() {
       <header className="app-header glass">
         <div className="header-brand">
           <div>
-            <h1>Multi-Voice Timer</h1>
+            <h1>Time-Secretary</h1>
             <p className="subtitle">予告・読み上げ機能付きマルチタイマー</p>
           </div>
         </div>
@@ -433,7 +433,7 @@ function App() {
       </main>
 
       <footer className="app-footer">
-        <p>© 2026 Multi-Voice Timer. Deployable on Cloudflare Pages.</p>
+        <p>© 2026 Time-Secretary. Deployable on Cloudflare Pages.</p>
       </footer>
     </div>
   );
