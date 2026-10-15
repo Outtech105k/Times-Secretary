@@ -1,7 +1,7 @@
 import type { Timer } from '../types/timer.ts';
 
-const TIMERS_KEY = 'time-secretary:timers';
-const VOICE_ENABLED_KEY = 'time-secretary:voice-enabled';
+const TIMERS_KEY = 'times-secretary:timers';
+const VOICE_ENABLED_KEY = 'times-secretary:voice-enabled';
 
 // 旧バージョン（agy_ 接頭辞）で使っていたキー。互換性は持たず削除する
 const LEGACY_KEYS = ['agy_timers', 'agy_timers_saved_at', 'agy_voice_enabled'];
