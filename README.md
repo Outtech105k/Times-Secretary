@@ -1,7 +1,7 @@
 # Time-Secretary
 > 予告・読み上げ機能付きマルチタイマー Web アプリケーション
 
-複数のタイマーを同時に管理・実行できる、高性能でスタイリッシュなタイマーアプリです。Cloudflare Pages などの静的サイトホスティングサービスに簡単にデプロイできます。
+複数のタイマーを同時に管理・実行できる、高性能でスタイリッシュなタイマーアプリです。Cloudflare などの静的サイトホスティングサービスに簡単にデプロイできます。
 
 ## ✨ 主な機能
 
@@ -23,7 +23,7 @@
 *   **Frontend**: React, TypeScript, Vite
 *   **Styling**: Vanilla CSS (CSS Variables, Flexbox, Grid, CSS Transitions, keyframe animation)
 *   **Voice Engine**: Web Speech API (`SpeechSynthesis`)
-*   **Deployment**: Cloudflare Pages 互換
+*   **Deployment**: Cloudflare Workers（静的アセット）
 
 ---
 
@@ -41,18 +41,13 @@ npm run dev
 
 ---
 
-## 🌐 Cloudflare Pages へのデプロイ
+## 🌐 Cloudflare へのデプロイ
 
-本プロジェクトは静的 SPA (Single Page Application) としてビルドされるため、Cloudflare Pages に容易にデプロイできます。
+本プロジェクトは静的 SPA (Single Page Application) としてビルドされ、[wrangler.jsonc](wrangler.jsonc) の設定により Cloudflare Workers の静的アセットとして配信します。
 
-### Cloudflare Pages 設定値:
-*   **Framework Preset**: `Vite` (または `None`)
-*   **Build command**: `npm run build`
-*   **Output directory**: `dist`
-*   **Root directory**: `/` (プロジェクトのルート)
-
-ビルドは以下のコマンドで実行できます：
 ```bash
 npm run build
+npx wrangler deploy
 ```
-ビルド完了後、`dist` ディレクトリの内容を Cloudflare Pages にアップロードしてください。
+
+`dist` ディレクトリの内容がそのままアップロードされます。静的ファイルのみで構成されているため、Cloudflare Pages など他の静的サイトホスティングサービスにも `dist` を配置するだけでデプロイできます。

@@ -273,7 +273,7 @@ function App() {
       </main>
 
       <footer className="app-footer">
-        <p>© 2026 Time-Secretary. Deployable on Cloudflare Pages.</p>
+        <p>© 2026 Time-Secretary</p>
       </footer>
     </div>
   );
