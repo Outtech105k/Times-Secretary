@@ -3,16 +3,38 @@
  * 外部音声ファイル (.mp3) なしで動作するためオフラインでも安定して再生可能
  */
 
+// 「キンコン」の2音が鳴り終わるまでのおおよその時間
+const CHIME_DURATION_MS = 2000;
+const ALARM_INTERVAL_MS = 2500;
+
 let audioCtx: AudioContext | null = null;
 let alarmIntervalId: number | null = null;
-let alarmTimeoutId: number | null = null;
+let chimeEndsAt = 0;
 const activeAlarms = new Set<string>();
+
+// アラームのループ中にチャイムを控えるべきか（読み上げ中など）を判定する関数
+let shouldHoldChime: () => boolean = () => false;
 
 const getAudioContext = (): AudioContext => {
   if (!audioCtx) {
-    audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const AudioContextClass =
+      window.AudioContext ??
+      (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    audioCtx = new AudioContextClass();
   }
   return audioCtx;
+};
+
+/**
+ * 再生中のチャイムが鳴り終わるまでの残り時間（ミリ秒）
+ */
+export const getChimeRemainingMs = (): number => Math.max(0, chimeEndsAt - Date.now());
+
+/**
+ * アラームのループ再生でチャイムを控える条件を登録する
+ */
+export const setChimeHold = (hold: () => boolean) => {
+  shouldHoldChime = hold;
 };
 
 /**
@@ -130,6 +152,7 @@ export const playChime = () => {
     }
 
     const now = ctx.currentTime;
+    chimeEndsAt = Date.now() + CHIME_DURATION_MS;
 
     // 1音目:「キン」- 高音で非常に澄んだ響き (E6: 1318.51Hz)
     playBellNote(ctx, 1318.51, now, 1.5, 0.25);
@@ -143,37 +166,22 @@ export const playChime = () => {
 };
 
 /**
- * 特定のタイマーの完了アラーム（チャイムのループ再生）を開始する
+ * 特定のタイマーの完了アラーム（チャイムのループ再生）を開始する。
+ * 初回は即座に鳴らし、以降は読み上げ中を除いて一定間隔で繰り返す。
  * @param timerId タイマーID
- * @param delayLoopMs ループ再生開始の待機時間（ミリ秒）。初回は即時鳴らし、ループを遅延させる場合に指定
  */
-export const startAlarm = (timerId: string, delayLoopMs = 0) => {
+export const startAlarm = (timerId: string) => {
   activeAlarms.add(timerId);
+  if (alarmIntervalId) return;
 
-  if (!alarmIntervalId && !alarmTimeoutId) {
-    // 初回は即座に鳴らす
-    playChime();
-
-    const scheduleInterval = () => {
-      alarmTimeoutId = null;
-      if (activeAlarms.size > 0 && !alarmIntervalId) {
-        // 2.5秒おきに「キンコン」を繰り返し再生するループを設定
-        alarmIntervalId = window.setInterval(() => {
-          if (activeAlarms.size > 0) {
-            playChime();
-          } else {
-            stopAllAlarms();
-          }
-        }, 2500);
-      }
-    };
-
-    if (delayLoopMs > 0) {
-      alarmTimeoutId = window.setTimeout(scheduleInterval, delayLoopMs);
-    } else {
-      scheduleInterval();
+  playChime();
+  alarmIntervalId = window.setInterval(() => {
+    if (activeAlarms.size === 0) {
+      stopAllAlarms();
+    } else if (!shouldHoldChime()) {
+      playChime();
     }
-  }
+  }, ALARM_INTERVAL_MS);
 };
 
 /**
@@ -193,9 +201,5 @@ const stopAllAlarms = () => {
   if (alarmIntervalId) {
     clearInterval(alarmIntervalId);
     alarmIntervalId = null;
-  }
-  if (alarmTimeoutId) {
-    clearTimeout(alarmTimeoutId);
-    alarmTimeoutId = null;
   }
 };

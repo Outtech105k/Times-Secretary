@@ -73,9 +73,9 @@ function App() {
       events.forEach((event) => {
         if (event.type === 'complete') {
           textsToSpeak.push(`${event.label}が終了しました。`);
-          startAlarm(event.timerId, voiceEnabledRef.current ? 4000 : 0);
+          startAlarm(event.timerId);
         } else {
-          textsToSpeak.push(`${event.label}、残り${event.remainingMinutes}分前。`);
+          textsToSpeak.push(`${event.label}、残り${event.remainingMinutes}分です。`);
           shouldPlaySingleChime = true;
         }
       });
@@ -108,7 +108,7 @@ function App() {
     if (!audioUnlocked) {
       if (!silent) {
         if (voiceEnabledRef.current) {
-          speak('音声読み上げ機能を有効化しました。');
+          speak('音声読み上げ機能が有効です。');
         } else {
           playChime();
         }

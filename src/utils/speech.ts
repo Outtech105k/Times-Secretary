@@ -2,12 +2,20 @@
  * Web Speech API (speechSynthesis) を使用した音声読み上げサービス
  */
 
+import { getChimeRemainingMs, setChimeHold } from './audio';
+
 // 発話キューを管理するための簡易ロック
 let isSpeaking = false;
 const speechQueue: string[] = [];
 
 // SafariのGC（ガベージコレクション）による発話バグを防ぐための参照保持用Set
 const activeUtterances = new Set<SpeechSynthesisUtterance>();
+
+// チャイムの鳴り終わりを待つためのタイマー
+let chimeWaitId: ReturnType<typeof setTimeout> | null = null;
+
+// 読み上げ中・待機中はアラームのチャイムを控え、音声と重ならないようにする
+setChimeHold(() => isSpeaking || speechQueue.length > 0);
 
 const processQueue = () => {
   if (typeof window === 'undefined' || !window.speechSynthesis) return;
@@ -17,7 +25,17 @@ const processQueue = () => {
     window.speechSynthesis.resume();
   }
 
-  if (isSpeaking || speechQueue.length === 0) return;
+  if (isSpeaking || speechQueue.length === 0 || chimeWaitId) return;
+
+  // チャイムの再生中は、鳴り終わってから読み上げる
+  const chimeRemainingMs = getChimeRemainingMs();
+  if (chimeRemainingMs > 0) {
+    chimeWaitId = setTimeout(() => {
+      chimeWaitId = null;
+      processQueue();
+    }, chimeRemainingMs);
+    return;
+  }
 
   const nextText = speechQueue.shift();
   if (!nextText) return;
