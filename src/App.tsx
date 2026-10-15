@@ -187,6 +187,7 @@ function App() {
               <input
                 type="checkbox"
                 checked={voiceEnabled}
+                aria-label="音声読み上げ"
                 onChange={(e) => {
                   const val = e.target.checked;
                   unlockAudio(true); // サイレントアンロックを実行

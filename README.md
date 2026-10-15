@@ -39,6 +39,12 @@ npm install
 npm run dev
 ```
 
+### 3. テスト・Lint
+```bash
+npm test      # node:test によるユニットテスト（Node.js 22.18 以降）
+npm run lint  # oxlint
+```
+
 ---
 
 ## 🌐 Cloudflare へのデプロイ
