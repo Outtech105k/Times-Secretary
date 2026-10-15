@@ -51,7 +51,7 @@ export const TimerCard: React.FC<TimerCardProps> = ({
       <div className="timer-display-container">
         {/* 円形プログレスバー */}
         <div className="progress-circle-wrapper">
-          <svg className="progress-circle" width="160" height="160" viewBox="0 0 160 160">
+          <svg aria-hidden="true" className="progress-circle" width="160" height="160" viewBox="0 0 160 160">
             {/* 背景サークル */}
             <circle
               className="progress-bg"
@@ -74,7 +74,7 @@ export const TimerCard: React.FC<TimerCardProps> = ({
             />
           </svg>
           <div className="timer-digital-display">
-            <span className="time-text">{formatTime(remaining)}</span>
+            <span className="time-text" role="timer" aria-label={`残り ${formatTime(remaining)}`}>{formatTime(remaining)}</span>
             <span className="total-time">初期設定: {formatTime(duration)}</span>
           </div>
         </div>
@@ -83,24 +83,25 @@ export const TimerCard: React.FC<TimerCardProps> = ({
       <div className="timer-controls">
         {isCompleted ? (
           <>
-            <button
-              onClick={() => onReset(timer.id, true)}
-              className="btn btn-control btn-resume"
-              title="リセットして再開"
-              aria-label="リセットして再開"
-            >
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
-                <polygon points="5 3 19 12 5 21 5 3" />
-              </svg>
-            </button>
+            {/* アラームは止めるまで鳴り続ける。止めたタイマーは削除せず初期時間に戻す */}
             <button
               onClick={() => onReset(timer.id, false)}
               className="btn btn-control btn-reset"
-              title="アラーム停止・リセット"
-              aria-label="アラーム停止・リセット"
+              title="アラームを止める（初期時間に戻す）"
+              aria-label="アラームを止める（初期時間に戻す）"
             >
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="6" y="6" width="12" height="12" />
+              </svg>
+            </button>
+            <button
+              onClick={() => onReset(timer.id, true)}
+              className="btn btn-control btn-resume"
+              title="アラームを止めて再スタート"
+              aria-label="アラームを止めて再スタート"
+            >
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
+                <polygon points="5 3 19 12 5 21 5 3" />
               </svg>
             </button>
             <button
@@ -109,7 +110,7 @@ export const TimerCard: React.FC<TimerCardProps> = ({
               title="削除"
               aria-label="削除"
             >
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
@@ -124,7 +125,7 @@ export const TimerCard: React.FC<TimerCardProps> = ({
                 title="一時停止"
                 aria-label="一時停止"
               >
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="6" y="4" width="4" height="16" />
                   <rect x="14" y="4" width="4" height="16" />
                 </svg>
@@ -136,7 +137,7 @@ export const TimerCard: React.FC<TimerCardProps> = ({
                 title="再開"
                 aria-label="再開"
               >
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
                   <polygon points="5 3 19 12 5 21 5 3" />
                 </svg>
               </button>
@@ -147,7 +148,7 @@ export const TimerCard: React.FC<TimerCardProps> = ({
               title="リセット"
               aria-label="リセット"
             >
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
               </svg>
             </button>
@@ -157,7 +158,7 @@ export const TimerCard: React.FC<TimerCardProps> = ({
               title="削除"
               aria-label="削除"
             >
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>

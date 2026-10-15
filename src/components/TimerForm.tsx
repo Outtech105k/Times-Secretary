@@ -192,6 +192,7 @@ export const TimerForm: React.FC<TimerFormProps> = ({ onAddTimer }) => {
           <input
             type="checkbox"
             checked={autoStart}
+            aria-label="追加後に即時開始する"
             onChange={(e) => setAutoStart(e.target.checked)}
           />
           <span className="slider round"></span>

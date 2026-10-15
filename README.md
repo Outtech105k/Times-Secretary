@@ -1,16 +1,17 @@
-# Multi-Voice Timer
+# Times-Secretary
 > 予告・読み上げ機能付きマルチタイマー Web アプリケーション
 
-複数のタイマーを同時に管理・実行できる、高性能でスタイリッシュなタイマーアプリです。Cloudflare Pages などの静的サイトホスティングサービスに簡単にデプロイできます。
+複数のタイマーを同時に管理・実行できる、高性能でスタイリッシュなタイマーアプリです。Cloudflare などの静的サイトホスティングサービスに簡単にデプロイできます。
 
 ## ✨ 主な機能
 
 *   **複数タイマーの同時管理**: 各タイマーにラベルを設定し、並行してカウントダウンを実行できます。
 *   **高精度な時間計測**: `Date.now()` を用いて経過時間を算出するため、タブがバックグラウンドに移行しても時間のズレが発生しません。
+    *   ※ ブラウザはバックグラウンドタブの処理を間引くため、予告・完了の通知は最大1分程度遅れることがあります（遅れた場合も実際の残り時間を読み上げます）。スマートフォンで画面がスリープすると処理自体が停止するため通知されません。
 *   **音声予告 (TTS)**: Web Speech API を利用した日本語音声読み上げ機能を搭載。
-    *   **10分前予告**: すべてのタイマーで「[ラベル名]、残り10分前。」と読み上げます。
-    *   **30分前予告**: 設定時間が60分を超えるタイマーのみ、残り30分時点で「[ラベル名]、残り30分前。」と読み上げます。
-    *   **完了通知**: タイマー完了時に「[ラベル名]が終了しました。」と読み上げます。
+    *   **10分前予告**: すべてのタイマーでチャイムの後に「[ラベル名]、残り10分です。」と読み上げます。
+    *   **30分前予告**: 設定時間が60分を超えるタイマーのみ、残り30分時点でチャイムの後に「[ラベル名]、残り30分です。」と読み上げます。
+    *   **完了通知**: タイマー完了時に「[ラベル名]が終了しました。」と読み上げ、停止するまでチャイムを繰り返し鳴らします（読み上げ中はチャイムを控えます）。
 *   **状態の永続化**: タイマーの進行状況は自動的に `localStorage` に保存され、ページをリロードしたりブラウザを閉じたりしても、バックグラウンドでの経過時間を反映して再開されます。
 *   **レスポンシブデザイン**: スマートフォン、タブレット、PCに対応した美しいダークテーマ（ガラスモフィズム）のUI。
 *   **一括操作機能**: すべてのタイマーの一時停止、再開、削除がワンクリックで行えます。
@@ -22,7 +23,7 @@
 *   **Frontend**: React, TypeScript, Vite
 *   **Styling**: Vanilla CSS (CSS Variables, Flexbox, Grid, CSS Transitions, keyframe animation)
 *   **Voice Engine**: Web Speech API (`SpeechSynthesis`)
-*   **Deployment**: Cloudflare Pages 互換
+*   **Deployment**: Cloudflare Workers（静的アセット）
 
 ---
 
@@ -38,20 +39,21 @@ npm install
 npm run dev
 ```
 
+### 3. テスト・Lint
+```bash
+npm test      # node:test によるユニットテスト（Node.js 22.18 以降）
+npm run lint  # oxlint
+```
+
 ---
 
-## 🌐 Cloudflare Pages へのデプロイ
+## 🌐 Cloudflare へのデプロイ
 
-本プロジェクトは静的 SPA (Single Page Application) としてビルドされるため、Cloudflare Pages に容易にデプロイできます。
+本プロジェクトは静的 SPA (Single Page Application) としてビルドされ、[wrangler.jsonc](wrangler.jsonc) の設定により Cloudflare Workers の静的アセットとして配信します。
 
-### Cloudflare Pages 設定値:
-*   **Framework Preset**: `Vite` (または `None`)
-*   **Build command**: `npm run build`
-*   **Output directory**: `dist`
-*   **Root directory**: `/` (プロジェクトのルート)
-
-ビルドは以下のコマンドで実行できます：
 ```bash
 npm run build
+npx wrangler deploy
 ```
-ビルド完了後、`dist` ディレクトリの内容を Cloudflare Pages にアップロードしてください。
+
+`dist` ディレクトリの内容がそのままアップロードされます。静的ファイルのみで構成されているため、Cloudflare Pages など他の静的サイトホスティングサービスにも `dist` を配置するだけでデプロイできます。

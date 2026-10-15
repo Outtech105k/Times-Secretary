@@ -1,5 +1,5 @@
 {
-  "name": "multi-voice-timer",
+  "name": "times-secretary",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "test": "node --test src/utils/time.test.ts",
+    "test": "node --test \"src/**/*.test.ts\"",
     "preview": "vite preview"
   },
   "dependencies": {
