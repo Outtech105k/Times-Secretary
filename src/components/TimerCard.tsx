@@ -166,20 +166,6 @@ export const TimerCard: React.FC<TimerCardProps> = ({
           </>
         )}
       </div>
-
-      {/* 予告情報インジケーター（10分を超えるタイマーのみ） */}
-      {!isCompleted && duration > 600 && (
-        <div className="preview-indicator">
-          {duration > 3600 && (
-            <span className={`badge ${timer.voiced30Min ? 'done' : 'pending'}`}>
-              30分前予告
-            </span>
-          )}
-          <span className={`badge ${timer.voiced10Min ? 'done' : 'pending'}`}>
-            10分前予告
-          </span>
-        </div>
-      )}
     </div>
   );
 };

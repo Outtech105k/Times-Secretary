@@ -451,37 +451,6 @@
   flex: 1 1 100%;
 }
 
-/* Notification badges inside card */
-.preview-indicator {
-  display: flex;
-  gap: 6px;
-  justify-content: center;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  padding-top: 12px;
-}
-
-.badge {
-  font-size: 10px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-
-.badge.pending {
-  background: rgba(255, 255, 255, 0.03);
-  color: var(--color-text-muted);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.badge.done {
-  background: rgba(16, 185, 129, 0.12);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.15);
-}
-
 /* Footer styling */
 .app-footer {
   text-align: center;
