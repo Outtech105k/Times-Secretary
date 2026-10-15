@@ -6,7 +6,7 @@ export interface Timer {
   status: 'running' | 'paused' | 'completed';
   createdAt: number; // 作成時刻のタイムスタンプ
   startedAt?: number; // 最後にカウントダウンを開始したタイムスタンプ（ミリ秒）
-  accumulatedElapsed: number; // 過去のセッションで経過した時間（秒数）
+  accumulatedElapsedMs: number; // 過去のセッションで経過した時間（ミリ秒）
   voiced30Min: boolean; // 30分前予告の音声再生フラグ
   voiced10Min: boolean; // 10分前予告の音声再生フラグ
   voicedEnd: boolean; // 終了音声の再生フラグ
