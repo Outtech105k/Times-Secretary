@@ -91,7 +91,12 @@ function App() {
     };
 
     const intervalId = setInterval(tick, 200);
-    return () => clearInterval(intervalId);
+    // バックグラウンドではインターバルが間引かれるため、タブ復帰時に即座に判定する
+    document.addEventListener('visibilitychange', tick);
+    return () => {
+      clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', tick);
+    };
   }, [updateTimers]);
 
   // 音声の事前アンロック（ブラウザの自動再生ポリシー対策）
@@ -258,7 +263,7 @@ function App() {
             <div className="empty-state glass">
               <h2>タイマーが登録されていません</h2>
               <p>左側のフォームからタイマーを追加して、マルチタスクを開始しましょう。</p>
-              <p className="hint">※バックグラウンドでブラウザタブを開いていても、タイマーは正確に動作し、音声で予告・通知します。</p>
+              <p className="hint">※タブがバックグラウンドでも残り時間は正確に計測されます。ただしブラウザの省電力制御により、予告・通知が最大1分ほど遅れることがあります。スマートフォンで画面がスリープした場合は通知されません。</p>
             </div>
           ) : (
             <div className="timers-grid">
