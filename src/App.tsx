@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { Timer } from './types/timer';
+import { loadTimers, loadVoiceEnabled, removeLegacyStorage, saveTimers, saveVoiceEnabled } from './utils/storage';
 import { createTimer, pauseTimer, resetTimer, resumeTimer, tickTimer, type TimerEvent } from './utils/timer';
 import { TimerForm } from './components/TimerForm';
 import { TimerCard } from './components/TimerCard';
@@ -7,28 +8,17 @@ import { speak, unlockSpeechSynthesis } from './utils/speech';
 import { playChime, startAlarm, stopAlarm, unlockAudioContext } from './utils/audio';
 import './App.css';
 
-const TIMERS_STORAGE_KEY = 'agy_timers';
-
 // 保存済みタイマーを読み込み、閉じていた間の経過を（発話なしで）反映する
-const loadTimers = (): Timer[] => {
-  const saved = localStorage.getItem(TIMERS_STORAGE_KEY);
-  if (!saved) return [];
-  try {
-    const now = Date.now();
-    return (JSON.parse(saved) as Timer[]).map((timer) => tickTimer(timer, now, true).timer);
-  } catch (e) {
-    console.error('Failed to parse timers from localStorage', e);
-    return [];
-  }
+const restoreTimers = (): Timer[] => {
+  removeLegacyStorage();
+  const now = Date.now();
+  return loadTimers().map((timer) => tickTimer(timer, now, true).timer);
 };
 
 function App() {
-  const [timers, setTimersState] = useState<Timer[]>(loadTimers);
+  const [timers, setTimersState] = useState<Timer[]>(restoreTimers);
   const [audioUnlocked, setAudioUnlocked] = useState(false);
-  const [voiceEnabled, setVoiceEnabled] = useState(() => {
-    const saved = localStorage.getItem('agy_voice_enabled');
-    return saved !== null ? saved === 'true' : true;
-  });
+  const [voiceEnabled, setVoiceEnabled] = useState(loadVoiceEnabled);
 
   // インターバル処理とユーザー操作が常に最新の状態を基に更新できるよう、ref を唯一の書き込み元とする
   const timersRef = useRef<Timer[]>(timers);
@@ -43,12 +33,12 @@ function App() {
 
   useEffect(() => {
     voiceEnabledRef.current = voiceEnabled;
-    localStorage.setItem('agy_voice_enabled', voiceEnabled.toString());
+    saveVoiceEnabled(voiceEnabled);
   }, [voiceEnabled]);
 
   // タイマー状態変更時にLocalStorageに保存
   useEffect(() => {
-    localStorage.setItem(TIMERS_STORAGE_KEY, JSON.stringify(timers));
+    saveTimers(timers);
   }, [timers]);
 
   // 高精度インターバルタイマー (200ms周期)
